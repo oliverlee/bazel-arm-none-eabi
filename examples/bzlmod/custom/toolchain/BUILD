@@ -22,7 +22,7 @@ arm_none_eabi_toolchain(
     ],
 )
 
-# Cortex-M4 toolchain, compiled using g++ instead of gcc
+# Cortex-M4 toolchain
 arm_none_eabi_toolchain(
     name = "cortex_m4_toolchain",
     copts = [
@@ -31,7 +31,7 @@ arm_none_eabi_toolchain(
         "-mfloat-abi=hard",
         "-mfpu=fpv4-sp-d16",
     ],
-    gcc_tool = "g++",
+    #gcc_tool = "g++",
     linkopts = [
         "-mcpu=cortex-m4",
         "-mthumb",
@@ -40,7 +40,7 @@ arm_none_eabi_toolchain(
         "-nostartfiles",
     ],
     additional_link_libraries = [
-        "//custom:lib",
+        "//custom:stubs",
     ],
     target_compatible_with = [
         "@platforms//os:none",

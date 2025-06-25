@@ -1,6 +1,6 @@
 extern int main();
 
-extern void _start()
+void _start()
 {
     main();
 }
