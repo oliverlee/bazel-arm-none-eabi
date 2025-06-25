@@ -13,6 +13,7 @@ def %toolchain_name%_toolchain(
         copts = [],
         linkopts = [],
         target_compatible_with = [],
+        additional_link_libraries= [],
         include_std = False
     ):
     """
@@ -47,6 +48,14 @@ def %toolchain_name%_toolchain(
             copts = copts + fix_copts,
             linkopts = linkopts + fix_linkopts,
             include_std = include_std,
+            additional_link_libraries = additional_link_libraries,
+        )
+
+        native.filegroup(
+            name = "{}_{}_all_linker_files".format(name, host_repo),
+            srcs = [
+                "{}:linker_files".format(alias_repo),
+            ] + additional_link_libraries,
         )
 
         cc_toolchain(
@@ -55,7 +64,8 @@ def %toolchain_name%_toolchain(
             ar_files = "{}:ar_files".format(alias_repo),
             compiler_files = "{}:compiler_files".format(alias_repo),
             dwp_files = ":empty",
-            linker_files = "{}:linker_files".format(alias_repo),
+            linker_files = ":{}_{}_all_linker_files".format(name, host_repo),
+            #linker_files = "{}:linker_files".format(alias_repo),
             objcopy_files = "{}:objcopy".format(alias_repo),
             strip_files = "{}:strip".format(alias_repo),
             supports_param_files = 0,

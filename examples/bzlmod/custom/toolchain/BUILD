@@ -39,6 +39,9 @@ arm_none_eabi_toolchain(
         "-mfpu=fpv4-sp-d16",
         "-nostartfiles",
     ],
+    additional_link_libraries = [
+        "//custom:lib",
+    ],
     target_compatible_with = [
         "@platforms//os:none",
         "//custom/cpu:cortex_m4",
