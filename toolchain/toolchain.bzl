@@ -2,6 +2,7 @@
 This module provides functions to register an arm-none-eabi toolchain
 """
 
+load("@bazel_skylib//lib:versions.bzl", "versions")
 load("@local_config_platform//:constraints.bzl", "HOST_CONSTRAINTS")
 load("@rules_cc//cc:defs.bzl", "cc_toolchain")
 load("@toolchains_arm_gnu//toolchain:config.bzl", "cc_arm_gnu_toolchain_config")
@@ -58,7 +59,7 @@ def _basic_arm_gnu_toolchain(
     fix_linkopts = []
 
     # macOS on apple rejects the relative path LTO plugin
-    if version == "13.2.1" and "darwin" in host_system_name:
+    if versions.is_at_least("13.2.1", version) and "darwin" in host_system_name:
         fix_linkopts.append("-fno-lto")
 
     toolchain_identifier = "{}_{}_{}".format(name, host_system_name, toolchain_prefix)
@@ -68,6 +69,8 @@ def _basic_arm_gnu_toolchain(
             toolchain_prefix.replace("-", "_"),
             "{}_{}".format(toolchain_prefix, host_system_name).replace("-", "_"),
         )
+    elif "//" not in toolchain_files_package:
+        toolchain_files_package += "//"
 
     cc_arm_gnu_toolchain_config(
         name = "config_{}".format(name),

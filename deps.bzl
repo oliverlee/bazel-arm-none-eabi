@@ -17,12 +17,9 @@ def _arm_gnu_cross_hosted_platform_specific_repo_impl(repository_ctx):
 
     repository_ctx.template(
         "BUILD.bazel",
-        Label("@toolchains_arm_gnu//toolchain:templates/compiler.BUILD"),
+        Label("@toolchains_arm_gnu//toolchain/templates:compiler.BUILD"),
         substitutions = {
             "%toolchain_prefix%": repository_ctx.attr.toolchain_prefix,
-            "%version%": repository_ctx.attr.version.split("-")[0],
-            "%bin_extension%": ".exe" if "windows" in repository_ctx.name else "",
-            "%tools%": "{}".format(repository_ctx.attr.tools),
         },
     )
 
@@ -46,8 +43,8 @@ arm_gnu_cross_hosted_platform_specific_repo = repository_rule(
 def _arm_gnu_toolchain_repo_impl(repository_ctx):
     """Defines the top-level toolchain repository."""
     repository_ctx.template(
-        "BUILD",
-        Label("@toolchains_arm_gnu//toolchain:templates/top.BUILD"),
+        "BUILD.bazel",
+        Label("@toolchains_arm_gnu//toolchain/templates:top.BUILD"),
         substitutions = {
             "%toolchain_prefix%": repository_ctx.attr.toolchain_prefix,
             "%version%": repository_ctx.attr.version,
@@ -56,7 +53,7 @@ def _arm_gnu_toolchain_repo_impl(repository_ctx):
 
     repository_ctx.template(
         "toolchain/BUILD",
-        Label("@toolchains_arm_gnu//toolchain:templates/toolchain.BUILD"),
+        Label("@toolchains_arm_gnu//toolchain/templates:toolchain.BUILD"),
         substitutions = {
             "%toolchain_prefix%": repository_ctx.attr.toolchain_prefix,
             "%version%": repository_ctx.attr.version,
@@ -70,16 +67,24 @@ def _arm_gnu_toolchain_repo_impl(repository_ctx):
 
     repository_ctx.template(
         "version.bzl",
-        Label("@toolchains_arm_gnu//toolchain:templates/version.bzl"),
+        Label("@toolchains_arm_gnu//toolchain/templates:version.bzl"),
         substitutions = {
             "%version%": repository_ctx.attr.version,
+        },
+    )
+
+    repository_ctx.template(
+        "compiler.BUILD",
+        Label("@toolchains_arm_gnu//toolchain/templates:compiler.BUILD"),
+        substitutions = {
+            "%toolchain_prefix%": repository_ctx.attr.toolchain_prefix,
         },
     )
 
     for host_archive in repository_ctx.attr.host_archives.keys():
         repository_ctx.template(
             "toolchain/{}/BUILD.bazel".format(host_archive),
-            Label("@toolchains_arm_gnu//toolchain:templates/alias.BUILD"),
+            Label("@toolchains_arm_gnu//toolchain/templates:alias.BUILD"),
             substitutions = {
                 "%host_archive%": host_archive,
             },

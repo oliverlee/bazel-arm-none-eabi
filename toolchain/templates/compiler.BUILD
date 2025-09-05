@@ -3,61 +3,89 @@ This BUILD file marks the top of the host-specific cross-toolchain repository.
 If the host needs @arm_none_eabi_linux_x86_64, this is the build file at the
 top of that repository.
 """
+
 load("@toolchains_arm_gnu//toolchain:tools.bzl", "tools")
 
 package(default_visibility = ["//visibility:public"])
 
-# export the executable files to make them available for direct use.
-exports_files(glob(["**"], exclude_directories = 0))
-
 PREFIX = "%toolchain_prefix%"
-VERSION = "%version%"
 
-# executables.
+# export the executable files to make them available for direct use.
+exports_files(
+    glob(
+        ["**"],
+        exclude_directories = 0,
+    ),
+)
+
 [
     filegroup(
         name = tool,
-        srcs = ["bin/{}-{}%bin_extension%".format(PREFIX, tool)],
+        srcs = glob(
+            [
+                "bin/{}-{}".format(PREFIX, tool),
+                "bin/{}-{}.exe".format(PREFIX, tool),
+            ],
+            allow_empty = True,
+        ),
     )
     for tool in tools
 ]
 
 filegroup(
     name = "include_path",
-    srcs = [
-      "{}/include/c++/{}".format(PREFIX, VERSION),
-      "{}/include/c++/{}/{}".format(PREFIX, VERSION, PREFIX),
-      "{}/include".format(PREFIX),
-      "lib/gcc/{}/{}/include".format(PREFIX, VERSION),
-      "lib/gcc/{}/{}/include-fixed".format(PREFIX, VERSION),
-    ],
+    srcs = glob(
+        [
+            p.format(prefix = PREFIX)
+            for p in [
+                # '*' is used to match the GCC version without needing to specify it
+                "{prefix}/include",
+                "{prefix}/include/c++/*",
+                "{prefix}/include/c++/*/{prefix}",
+                "lib/gcc/{prefix}/*/include",
+                "lib/gcc/{prefix}/*/include-fixed",
+            ]
+        ],
+        allow_empty = False,
+        exclude_directories = 0,
+    ),
 )
 
 # Just the components to add to the library path.
 filegroup(
     name = "library_path",
-    srcs = [
-      PREFIX,
-      "{}/lib".format(PREFIX),
-    ] + glob(["lib/gcc/{}/*".format(PREFIX)], exclude_directories = 0),
+    srcs = glob(
+        [
+            p.format(PREFIX)
+            for p in [
+                "{}",
+                "{}/lib",
+                "lib/gcc/{}/*",
+            ]
+        ],
+        allow_empty = False,
+        exclude_directories = 0,
+    ),
 )
 
 # libraries, headers and executables.
 filegroup(
     name = "compiler_pieces",
-    srcs = glob([
-        "bin/**",
-        "libexec/**",
-        "{}/**".format(PREFIX),
-        "lib/**",
-        "lib/gcc/{}/**".format(PREFIX),
-    ]),
+    srcs = glob(
+        [
+            "bin/**",
+            "lib/**",
+            "libexec/**",
+            "{}/**".format(PREFIX),
+        ],
+        allow_empty = False,
+    ),
 )
 
 # files for executing compiler.
 filegroup(
     name = "compiler_files",
-    srcs =  [":compiler_pieces"],
+    srcs = [":compiler_pieces"],
 )
 
 filegroup(
@@ -73,5 +101,5 @@ filegroup(
 # collection of executables.
 filegroup(
     name = "compiler_components",
-    srcs =  [":compiler_pieces"],
+    srcs = [":compiler_pieces"],
 )
