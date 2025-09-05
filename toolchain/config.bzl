@@ -300,7 +300,6 @@ cc_arm_gnu_toolchain_config = rule(
         "toolchain_prefix": attr.string(default = ""),
         "host_system_name": attr.string(default = ""),
         "toolchain_bins": attr.label(mandatory = True, allow_files = True),
-        "gcc_repo": attr.string(default = ""),
         "gcc_version": attr.string(default = ""),
         "gcc_tool": attr.string(default = "gcc"),
         "abi_version": attr.string(default = ""),

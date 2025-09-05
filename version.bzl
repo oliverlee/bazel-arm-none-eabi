@@ -68,3 +68,11 @@ def latest_version(name):
         "aarch64-none-linux-gnu": max_version(AARCH64_NONE_LINUX_GNU.keys()),
     }
     return latest.get(name, None)
+
+def default_version(name):
+   return {
+       "arm-none-eabi": "13.2.1",
+       "arm-none-linux-gnueabihf": "13.2.1",
+       "aarch64-none-linux-gnu": "13.2.1",
+
+   }.get(name, None)

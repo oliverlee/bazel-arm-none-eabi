@@ -8,15 +8,18 @@ package(default_visibility = ["//visibility:public"])
 
 load(
     "@toolchains_arm_gnu//toolchain:toolchain.bzl",
-    "%toolchain_name%_toolchain",
-    "target_constraints",
+    "toolchain",
+)
+load(
+    "@toolchains_arm_gnu//toolchain:constraints.bzl",
+    "constraints",
 )
 
 [
-    %toolchain_name%_toolchain(
+    toolchain["%toolchain_prefix%"](
         name = name,
         version = "%version%",
-        target_compatible_with = constraints,
+        target_compatible_with = target_compatible_with,
     )
-    for name, constraints in target_constraints['%toolchain_prefix%'].items()
+    for name, target_compatible_with in constraints.target['%toolchain_prefix%'].items()
 ]

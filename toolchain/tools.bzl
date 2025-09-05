@@ -1,0 +1,16 @@
+tools = [
+    "as",
+    "ar",
+    "c++",
+    "cpp",
+    "g++",
+    "gcc",
+    "gdb",
+    "ld",
+    "nm",
+    "objcopy",
+    "objdump",
+    "readelf",
+    "strip",
+    "size",
+]

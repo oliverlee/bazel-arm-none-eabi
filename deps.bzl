@@ -1,7 +1,7 @@
 """deps.bzl"""
 
 load("@toolchains_arm_gnu//:version.bzl", "latest_version")
-load("@toolchains_arm_gnu//toolchain:toolchain.bzl", "tools")
+load("@toolchains_arm_gnu//toolchain:tools.bzl", "tools")
 load("@toolchains_arm_gnu//toolchain/archives:aarch64_none_elf.bzl", "AARCH64_NONE_ELF")
 load("@toolchains_arm_gnu//toolchain/archives:aarch64_none_linux_gnu.bzl", "AARCH64_NONE_LINUX_GNU")
 load("@toolchains_arm_gnu//toolchain/archives:arm_none_eabi.bzl", "ARM_NONE_EABI")
@@ -49,9 +49,8 @@ def _arm_gnu_toolchain_repo_impl(repository_ctx):
         "BUILD",
         Label("@toolchains_arm_gnu//toolchain:templates/top.BUILD"),
         substitutions = {
-            "%toolchain_name%": repository_ctx.attr.toolchain_name,
-            "%version%": repository_ctx.attr.version,
             "%toolchain_prefix%": repository_ctx.attr.toolchain_prefix,
+            "%version%": repository_ctx.attr.version,
         },
     )
 
@@ -59,40 +58,39 @@ def _arm_gnu_toolchain_repo_impl(repository_ctx):
         "toolchain/BUILD",
         Label("@toolchains_arm_gnu//toolchain:templates/toolchain.BUILD"),
         substitutions = {
-            "%toolchain_name%": repository_ctx.attr.toolchain_name,
-            "%version%": repository_ctx.attr.version,
             "%toolchain_prefix%": repository_ctx.attr.toolchain_prefix,
+            "%version%": repository_ctx.attr.version,
         },
+    )
+
+    repository_ctx.symlink(
+        Label("@toolchains_arm_gnu//toolchain:toolchain.bzl"),
+        "toolchain/toolchain.bzl",
     )
 
     repository_ctx.template(
-        "toolchain/toolchain.bzl",
-        Label("@toolchains_arm_gnu//toolchain:templates/toolchain.bazel"),
+        "version.bzl",
+        Label("@toolchains_arm_gnu//toolchain:templates/version.bzl"),
         substitutions = {
-            "%toolchain_name%": repository_ctx.attr.toolchain_name,
             "%version%": repository_ctx.attr.version,
-            "%toolchain_prefix%": repository_ctx.attr.toolchain_prefix,
-            "%hosts%": "{}".format(repository_ctx.attr.hosts),
         },
     )
 
-    for repo in repository_ctx.attr.hosts.keys():
+    for host_archive in repository_ctx.attr.host_archives.keys():
         repository_ctx.template(
-            "toolchain/{}/BUILD".format(repo),
+            "toolchain/{}/BUILD.bazel".format(host_archive),
             Label("@toolchains_arm_gnu//toolchain:templates/alias.BUILD"),
             substitutions = {
-                "%repo%": repo,
-                "%tools%": "{}".format(repository_ctx.attr.tools),
+                "%host_archive%": host_archive,
             },
         )
 
 toolchains_arm_gnu_repo = repository_rule(
     implementation = _arm_gnu_toolchain_repo_impl,
     attrs = {
-        "toolchain_name": attr.string(mandatory = True),
         "toolchain_prefix": attr.string(mandatory = True),
         "version": attr.string(mandatory = True),
-        "hosts": attr.string_list_dict(mandatory = True),
+        "host_archives": attr.string_list_dict(mandatory = True),
         "tools": attr.string_list(default = tools),
     },
 )
@@ -105,10 +103,9 @@ def toolchains_arm_gnu_deps(toolchain, toolchain_prefix, version, archives):
 
     toolchains_arm_gnu_repo(
         name = toolchain,
-        toolchain_name = toolchain,
         toolchain_prefix = toolchain_prefix,
         version = version,
-        hosts = {
+        host_archives = {
             repo["name"]: repo["exec_compatible_with"]
             for repo in archive
         },

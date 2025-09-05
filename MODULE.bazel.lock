@@ -139,7 +139,7 @@
   "moduleExtensions": {
     "//:extensions.bzl%arm_toolchain": {
       "general": {
-        "bzlTransitiveDigest": "t3cHywM6dCabqw7xBNJN+O3csA16VA/X6g/5Yqx9Tqc=",
+        "bzlTransitiveDigest": "UksjDVUn+4uslKHIVDkrQYtl2pdp9iotGFNmUiW3gh8=",
         "usagesDigest": "P/3UnhHe8mBjAHhQOgY8IbRzO7gyGHPkTqDB/W/U9qY=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
@@ -148,10 +148,9 @@
           "arm_none_eabi": {
             "repoRuleId": "@@//:deps.bzl%toolchains_arm_gnu_repo",
             "attributes": {
-              "toolchain_name": "arm_none_eabi",
               "toolchain_prefix": "arm-none-eabi",
               "version": "13.2.1",
-              "hosts": {
+              "host_archives": {
                 "arm_none_eabi_darwin_x86_64": [
                   "@platforms//os:macos",
                   "@platforms//cpu:x86_64"
@@ -248,10 +247,9 @@
           "arm_none_linux_gnueabihf": {
             "repoRuleId": "@@//:deps.bzl%toolchains_arm_gnu_repo",
             "attributes": {
-              "toolchain_name": "arm_none_linux_gnueabihf",
               "toolchain_prefix": "arm-none-linux-gnueabihf",
               "version": "13.2.1",
-              "hosts": {
+              "host_archives": {
                 "arm_none_linux_gnueabihf_linux_x86_64": [
                   "@platforms//os:linux",
                   "@platforms//cpu:x86_64"
@@ -321,10 +319,9 @@
           "aarch64_none_elf": {
             "repoRuleId": "@@//:deps.bzl%toolchains_arm_gnu_repo",
             "attributes": {
-              "toolchain_name": "aarch64_none_elf",
               "toolchain_prefix": "aarch64-none-elf",
               "version": "13.2.1-1.1",
-              "hosts": {
+              "host_archives": {
                 "aarch64_none_elf_darwin_arm64": [
                   "@platforms//os:macos",
                   "@platforms//cpu:arm64"
@@ -421,10 +418,9 @@
           "aarch64_none_linux_gnu": {
             "repoRuleId": "@@//:deps.bzl%toolchains_arm_gnu_repo",
             "attributes": {
-              "toolchain_name": "aarch64_none_linux_gnu",
               "toolchain_prefix": "aarch64-none-linux-gnu",
               "version": "13.2.1",
-              "hosts": {
+              "host_archives": {
                 "aarch64_none_linux_gnu_linux_x86_64": [
                   "@platforms//os:linux",
                   "@platforms//cpu:x86_64"
@@ -474,53 +470,8 @@
         "recordedRepoMappingEntries": [
           [
             "",
-            "bazel_tools",
-            "bazel_tools"
-          ],
-          [
-            "",
-            "rules_cc",
-            "rules_cc+"
-          ],
-          [
-            "",
             "toolchains_arm_gnu",
             ""
-          ],
-          [
-            "bazel_features+",
-            "bazel_features_globals",
-            "bazel_features++version_extension+bazel_features_globals"
-          ],
-          [
-            "bazel_features+",
-            "bazel_features_version",
-            "bazel_features++version_extension+bazel_features_version"
-          ],
-          [
-            "protobuf+",
-            "proto_bazel_features",
-            "bazel_features+"
-          ],
-          [
-            "protobuf+",
-            "rules_cc",
-            "rules_cc+"
-          ],
-          [
-            "rules_cc+",
-            "bazel_tools",
-            "bazel_tools"
-          ],
-          [
-            "rules_cc+",
-            "com_google_protobuf",
-            "protobuf+"
-          ],
-          [
-            "rules_cc+",
-            "rules_cc",
-            "rules_cc+"
           ]
         ]
       }
