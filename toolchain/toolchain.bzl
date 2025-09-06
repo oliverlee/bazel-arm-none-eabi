@@ -80,7 +80,7 @@ def _basic_arm_gnu_toolchain(
         host_system_name = host_system_name,
         toolchain_prefix = toolchain_prefix,
         toolchain_identifier = toolchain_identifier,
-        toolchain_bins = "{}:compiler_components".format(toolchain_files_package),
+        toolchain_bins = "{}:binaries".format(toolchain_files_package),
         include_path = ["{}:include_path".format(toolchain_files_package)],
         library_path = ["{}:library_path".format(toolchain_files_package)],
         copts = copts,

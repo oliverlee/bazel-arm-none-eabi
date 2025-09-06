@@ -1,7 +1,55 @@
 # project/BUILD.bazel
 
+load("@arm_none_eabi//toolchain:toolchain.bzl", "arm_none_eabi_toolchain")
 load("@aspect_bazel_lib//lib:transitions.bzl", "platform_transition_filegroup")
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
+
+cc_library(
+    name = "link",
+    additional_linker_inputs = [
+        "microbit.ld",
+    ],
+    linkopts = [
+        "-T $(location :microbit.ld)",
+    ],
+)
+
+arm_none_eabi_toolchain(
+    name = "microbit_toolchain",
+    copts = [
+        "--target=armv6m-none-eabi",
+        "-mcpu=cortex-m0",
+        "-mthumb",
+        "-mfloat-abi=soft",
+        "-mfpu=none",
+        "-fno-exceptions",
+        "-fno-rtti",
+    ],
+    linkopts = [
+        "--target=armv6m-none-eabi",
+        "-mcpu=cortex-m0",
+        "-mthumb",
+        "-mfloat-abi=soft",
+        "-mfpu=none",
+        "-fno-exceptions",
+        "-fno-rtti",
+        "-nostartfiles",
+        "-lcrt0-semihost",
+        "-lsemihost",
+        "-lc++",
+    ],
+    additional_link_libraries = [
+        ":link",
+    ],
+    target_compatible_with = [
+        "@platforms//os:none",
+        "@platforms//cpu:arm",
+        #"@platforms//cpu:armv7e-m",
+    ],
+    toolchain_files_package = "@arm_clang_20.1.0_files",
+    #toolchain_files_package = "@arm_none_eabi_14.3.1_files",
+    #version = "14.3.1",
+)
 
 platform(
     name = "arm_none_eabi",
@@ -110,6 +158,19 @@ cc_binary(
 platform_transition_filegroup(
     name = "builds_without_warnings_bin",
     srcs = [":builds_without_warnings"],
+    target_platform = ":arm_none_eabi",
+    visibility = ["//visibility:public"],
+)
+
+cc_binary(
+    name = "baremetal-semihosting",
+    srcs = ["baremetal-semihosting.cpp"],
+    tags = ["manual"],
+)
+
+platform_transition_filegroup(
+    name = "baremetal-semihosting_bin",
+    srcs = [":baremetal-semihosting"],
     target_platform = ":arm_none_eabi",
     visibility = ["//visibility:public"],
 )

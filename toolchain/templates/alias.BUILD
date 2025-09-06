@@ -21,6 +21,6 @@ load("@toolchains_arm_gnu//toolchain:tools.bzl", "tools")
         "compiler_files",
         "ar_files",
         "linker_files",
-        "compiler_components",
+        "binaries",
     ]
 ]

@@ -1,10 +1,16 @@
 load("@bazel_tools//tools/build_defs/cc:action_names.bzl", "ACTION_NAMES")
 load("@rules_cc//cc:cc_toolchain_config_lib.bzl", "action_config", "feature", "flag_group", "flag_set")
+load("@toolchains_arm_gnu//toolchain:tools.bzl", "clang_tool")
 
 def _tool_path(bins, toolchain_prefix, tool_name):
     """Generate tool paths for GCC"""
+    #print(toolchain_prefix, tool_name)
     for file in bins:
-        if file.basename.startswith("{}-{}".format(toolchain_prefix, tool_name)):
+        if file.basename.startswith(
+            "{}-{}".format(toolchain_prefix, tool_name),
+        ):
+            return file
+        if file.basename == clang_tool(tool_name):
             return file
     return None
 
@@ -16,7 +22,11 @@ def _action_configs(ctx, action_names, tool_name, implies = []):
             tools = [
                 struct(
                     type_name = "tool",
-                    tool = _tool_path(ctx.files.toolchain_bins, ctx.attr.toolchain_prefix, tool_name),
+                    tool = _tool_path(
+                        ctx.files.toolchain_bins,
+                        ctx.attr.toolchain_prefix,
+                        tool_name,
+                    ),
                 ),
             ],
             implies = implies,
@@ -27,7 +37,7 @@ def _action_configs(ctx, action_names, tool_name, implies = []):
 def _default_compiler_flags(ctx):
     """Default compiler flags for GCC bazel toolchains"""
     compiler_flags = [
-        "-fno-canonical-system-headers",
+        #"-fno-canonical-system-headers",
         "-no-canonical-prefixes",
     ]
 
@@ -69,7 +79,7 @@ def _flag_groups_if_not_empty(flags, actual_flags = None):
         ),
     ]
 
-_all_compile_actions =[
+_all_compile_actions = [
     ACTION_NAMES.assemble,
     ACTION_NAMES.preprocess_assemble,
     ACTION_NAMES.linkstamp_compile,

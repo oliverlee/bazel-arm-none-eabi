@@ -4,7 +4,7 @@ If the host needs @arm_none_eabi_linux_x86_64, this is the build file at the
 top of that repository.
 """
 
-load("@toolchains_arm_gnu//toolchain:tools.bzl", "tools")
+load("@toolchains_arm_gnu//toolchain:tools.bzl", "clang_tool", "tools")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -23,8 +23,11 @@ exports_files(
         name = tool,
         srcs = glob(
             [
+                # gcc binaries
                 "bin/{}-{}".format(PREFIX, tool),
                 "bin/{}-{}.exe".format(PREFIX, tool),
+                # clang binaries
+                "bin/{}".format(clang_tool(tool)),
             ],
             allow_empty = True,
         ),
@@ -44,9 +47,14 @@ filegroup(
                 "{prefix}/include/c++/*/{prefix}",
                 "lib/gcc/{prefix}/*/include",
                 "lib/gcc/{prefix}/*/include-fixed",
+                #
+                "include",
+                "lib/clang/*/include",
+                "lib/clang-runtimes/{prefix}/*/include",
             ]
         ],
-        allow_empty = False,
+        #allow_empty = False,
+        allow_empty = True,
         exclude_directories = 0,
     ),
 )
@@ -56,14 +64,16 @@ filegroup(
     name = "library_path",
     srcs = glob(
         [
-            p.format(PREFIX)
+            p.format(prefix = PREFIX)
             for p in [
-                "{}",
-                "{}/lib",
-                "lib/gcc/{}/*",
+                "{prefix}",
+                "{prefix}/lib",
+                "lib/gcc/{prefix}/*",
+                "lib/clang-runtimes/{prefix}/*/lib",
             ]
         ],
-        allow_empty = False,
+        #allow_empty = False,
+        allow_empty = True,
         exclude_directories = 0,
     ),
 )
@@ -76,9 +86,10 @@ filegroup(
             "bin/**",
             "lib/**",
             "libexec/**",
-            "{}/**".format(PREFIX),
+            "{prefix}/**".format(prefix = PREFIX),
         ],
-        allow_empty = False,
+        #allow_empty = False,
+        allow_empty = True,
     ),
 )
 
@@ -100,6 +111,11 @@ filegroup(
 
 # collection of executables.
 filegroup(
-    name = "compiler_components",
-    srcs = [":compiler_pieces"],
+    name = "binaries",
+    srcs = glob(
+        [
+            "bin/*",
+        ],
+        allow_empty = False,
+    ),
 )

@@ -20,10 +20,13 @@ arm_toolchain = use_extension(
 )
 arm_toolchain.arm_none_eabi()
 use_repo(arm_toolchain, "arm_none_eabi")
+
 arm_toolchain.arm_none_linux_gnueabihf()
 use_repo(arm_toolchain, "arm_none_linux_gnueabihf")
+
 arm_toolchain.aarch64_none_elf()
 use_repo(arm_toolchain, "aarch64_none_elf")
+
 arm_toolchain.aarch64_none_linux_gnu()
 use_repo(arm_toolchain, "aarch64_none_linux_gnu")
 
@@ -34,4 +37,22 @@ register_toolchains(
     "@arm_none_eabi//toolchain:all",
     "@arm_none_linux_gnueabihf//toolchain:all",
     dev_dependency = True,
+)
+
+new_local_repository = use_repo_rule(
+    "@bazel_tools//tools/build_defs/repo:local.bzl",
+    "new_local_repository",
+)
+
+new_local_repository(
+    name = "arm_none_eabi_14.3.1_files",
+    build_file = "@arm_none_eabi//:compiler.BUILD",
+    path = "/Users/oliver/arm-none-eabi-14.3.1",
+)
+
+new_local_repository(
+    name = "arm_clang_20.1.0_files",
+    #build_file = "@arm_clang//:compiler.BUILD",
+    build_file = "@arm_none_eabi//:compiler.BUILD",
+    path = "/Users/oliver/Downloads/tmp/arm-clang/ATfE-20.1.0-Darwin-universal",
 )
